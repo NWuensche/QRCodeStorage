@@ -1,6 +1,7 @@
 package de.nwuensche.qrcodestorage
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,47 +34,30 @@ class QRActivity : AppCompatActivity() {
 
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
-            runOnUiThread {
-                Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
-            }
+                val d = Intent()
+                d.putExtra("value", it.text)
+                setResult(RESULT_OK, d)
+                finish()
         }
 
         //No toast, because this will be always shown in permission dialog, which is annoying
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
-            runOnUiThread {
                 //Asking for permission
                 if (!alreadyAskedPermission) {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_CODE)
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_CODE) // Permission Dialog
                     alreadyAskedPermission = true
-                } else { // Permission not granted, thus this lambda called again
-                    Toast.makeText(this, "Camera initialization error: ${it.message}", Toast.LENGTH_LONG).show()
+                } else { // Permission not granted or touched outside of dialog, thus this lambda called again
+                    val d = Intent()
+                    d.putExtra("value", "") //There is no empty QR Code, so this is enough to show permission denied
+                    setResult(RESULT_OK, d)
+                    finish()
                 }
-            }
         }
 
         scannerView.setOnClickListener {
             codeScanner.startPreview()
         }
     }
-
-    //TODO Implement Close
-    private fun askPermissionCameraOrClose() {
-        if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
-
-            // permission is already granted
-
-
-        }else{
-
-            //persmission is not granted yet
-            //Asking for permission
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),REQUEST_CODE)
-
-        }
-
-    }
-
 
     override fun onResume() {
         super.onResume()
