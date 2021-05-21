@@ -7,31 +7,29 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Database
+import androidx.room.Room
 import com.budiyev.android.codescanner.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
-    val itemList = mutableListOf<String>()
-    val rAdapter = RAdapter(itemList)
+    val db: ItemDB by lazy {  Room.databaseBuilder(this, ItemDB::class.java, "DB").allowMainThreadQueries().build() }
+    val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().toMutableList() } // Used to query DB only once
+    val rAdapter: RAdapter by lazy { RAdapter(itemList) }
     //TODO Licenses Libraries
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        itemList.add("ihi")
-        itemList.add("lol")
-
-
-        val rView = findViewById<RecyclerView>(R.id.qrlist).apply {
+        findViewById<RecyclerView>(R.id.qrlist).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = rAdapter
         }
 
-
-        val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
-        fab.setOnClickListener {
-            startActivityForResult(Intent(this, QRActivity::class.java), 0) //Dont care about requestCode, but need result
-
+        findViewById<FloatingActionButton>(R.id.floatingActionButton).apply {
+            setOnClickListener {
+                startActivityForResult(Intent(this@MainActivity, QRActivity::class.java), 0) //Dont care about requestCode, but need result
+            }
         }
     }
 
@@ -43,10 +41,10 @@ class MainActivity : AppCompatActivity() {
         } else if (data?.getStringExtra("value") == "") { //Permission error
             Toast.makeText(this, "Cannot Scan QR Code Without Camera Permission!", Toast.LENGTH_LONG).show()
         } else { //Have QR Code
-            Toast.makeText(this, "Scan result: ${data?.getStringExtra("value")}", Toast.LENGTH_LONG).show()
             data?.getStringExtra("value")?.let {
-                itemList.add(it)
-                rAdapter.notifyDataSetChanged()
+                itemList.add(it) //Used for display
+                db.itemDAO().insertItem(ItemModel(value = it)) //Used for persistence
+                rAdapter.notifyItemInserted(itemList.size - 1)
             } //Add String if present
         }
         super.onActivityResult(requestCode, resultCode, data)
