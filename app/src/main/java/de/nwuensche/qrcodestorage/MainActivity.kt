@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                 rAdapter.notifyItemInserted(itemList.size - 1)
             } //Add String if present
         }
+        //TODO Cut Long Text on View
         super.onActivityResult(requestCode, resultCode, data)
     }
 }

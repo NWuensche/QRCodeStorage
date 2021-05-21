@@ -3,7 +3,9 @@ package de.nwuensche.qrcodestorage
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class RAdapter(private val itemNames: List<String>) : RecyclerView.Adapter<RAdapter.ViewHolder>() {
@@ -16,10 +18,15 @@ class RAdapter(private val itemNames: List<String>) : RecyclerView.Adapter<RAdap
     override fun getItemCount() = itemNames.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.buttonTextView.text = "Button $position - ${itemNames[position]}"
+        val context = holder.textView.context
+        holder.textView.text = itemNames[position]
+        holder.copyView.setOnClickListener {
+            Toast.makeText(context, "tst - $position", Toast.LENGTH_SHORT).show()
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val buttonTextView = view.findViewById<Button>(R.id.buttonItem)
+        val textView = view.findViewById<TextView>(R.id.textView)
+        val copyView = view.findViewById<ImageView>(R.id.copyView)
     }
 }
