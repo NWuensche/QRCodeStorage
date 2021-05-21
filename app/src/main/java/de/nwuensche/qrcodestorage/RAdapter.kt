@@ -33,7 +33,7 @@ class RAdapter(private val itemNames: List<String>, private val clipboard: Clipb
         holder.copyView.setOnClickListener {
             val clip = ClipData.newPlainText("QR Value", itemNames[position])
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(context, "Copied to Clipboard!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.resources.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
         }
         holder.showQRView.setOnClickListener {
             val SIZE = 512

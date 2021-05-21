@@ -32,8 +32,6 @@ class QRActivity : AppCompatActivity() {
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
 
-        //TODO Internationalize
-        // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
                 val d = Intent()
                 d.putExtra("value", it.text)
@@ -69,5 +67,5 @@ class QRActivity : AppCompatActivity() {
         codeScanner.releaseResources()
         super.onPause()
     }
-    //TODO Rebase Code
+    //TODO Rebase Code + Layouts
 }

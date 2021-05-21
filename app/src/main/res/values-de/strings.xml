@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QR Code Speicher</string>
+    <string name="permission_denied_camera">QR Code kann ohne Kamera Berechtigung nicht gescannt werden!</string>
+    <string name="copied_to_clipboard">In Zwischenablage kopiert!</string>
+</resources>

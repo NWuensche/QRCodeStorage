@@ -18,6 +18,7 @@ import com.marcoscg.licenser.License
 import com.marcoscg.licenser.LicenserDialog
 
 
+//INFO Horizontal layout works out of the box
 class MainActivity : AppCompatActivity() {
     val db: ItemDB by lazy {  Room.databaseBuilder(this, ItemDB::class.java, "DB").allowMainThreadQueries().build() }
     val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().reversed().toMutableList() } // Used to query DB only once // Newest First
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    //TODO Check Horizontal layout
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
                     "https://developer.android.com/topic/libraries/support-library/index.html",
                     License.APACHE2)
                 )
+                .setLibrary(Library("QR Code Pictogram",
+                    "https://www.apache.org/licenses/LICENSE-2.0.txt",
+                    License.APACHE2))
                 .setLibrary(Library("Licenser",
                     "https://github.com/marcoscgdev/Licenser",
                     License.MIT))
@@ -75,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_CANCELED) { // Went back in App -> Do nothing
         } else if (data?.getStringExtra("value") == "") { //Permission error
-            Toast.makeText(this, "Cannot Scan QR Code Without Camera Permission!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, resources.getString(R.string.permission_denied_camera), Toast.LENGTH_LONG).show()
         } else { //Have QR Code
             data?.getStringExtra("value")?.let {
                 itemList.add(0,it) //Used for display, newest at top

@@ -33,6 +33,6 @@ xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:scaleType="fitXY"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        app:srcCompat="@drawable/ic_qrcode" />
 
 </LinearLayout>
