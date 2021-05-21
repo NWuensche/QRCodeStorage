@@ -32,6 +32,7 @@ class QRActivity : AppCompatActivity() {
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
 
+        //TODO Internationalize
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
                 val d = Intent()

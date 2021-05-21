@@ -47,5 +47,6 @@ dependencies {
     implementation group: 'androidx.room', name: 'room-runtime', version: '2.3.0'
     kapt "androidx.room:room-compiler:2.3.0" //For automatically creating implementation of abstract DB, need kapt because otherwise annotation duplicates occur
     implementation group: 'com.google.zxing', name: 'core', version: '3.4.1'
+    implementation 'com.github.marcoscgdev:Licenser:2.0.0'
 
 }
