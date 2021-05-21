@@ -1,5 +1,6 @@
 package de.nwuensche.qrcodestorage
 
+import android.content.ClipboardManager
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,7 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
     val db: ItemDB by lazy {  Room.databaseBuilder(this, ItemDB::class.java, "DB").allowMainThreadQueries().build() }
     val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().toMutableList() } // Used to query DB only once
-    val rAdapter: RAdapter by lazy { RAdapter(itemList) }
+    val rAdapter: RAdapter by lazy { RAdapter(itemList, getSystemService(CLIPBOARD_SERVICE) as ClipboardManager) }
     //TODO Licenses Libraries
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
