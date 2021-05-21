@@ -11,15 +11,22 @@ import com.budiyev.android.codescanner.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
+    val itemList = mutableListOf<String>()
+    val rAdapter = RAdapter(itemList)
     //TODO Licenses Libraries
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        itemList.add("ihi")
+        itemList.add("lol")
+
+
         val rView = findViewById<RecyclerView>(R.id.qrlist).apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = RAdapter()
+            adapter = rAdapter
         }
+
 
         val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
         fab.setOnClickListener {
@@ -37,6 +44,10 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Cannot Scan QR Code Without Camera Permission!", Toast.LENGTH_LONG).show()
         } else { //Have QR Code
             Toast.makeText(this, "Scan result: ${data?.getStringExtra("value")}", Toast.LENGTH_LONG).show()
+            data?.getStringExtra("value")?.let {
+                itemList.add(it)
+                rAdapter.notifyDataSetChanged()
+            } //Add String if present
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
