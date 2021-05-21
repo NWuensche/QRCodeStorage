@@ -15,15 +15,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     val db: ItemDB by lazy {  Room.databaseBuilder(this, ItemDB::class.java, "DB").allowMainThreadQueries().build() }
-    val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().toMutableList() } // Used to query DB only once
+    val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().reversed().toMutableList() } // Used to query DB only once // Newest First
     val rAdapter: RAdapter by lazy { RAdapter(itemList, getSystemService(CLIPBOARD_SERVICE) as ClipboardManager) }
+    val lManager = LinearLayoutManager(this)
     //TODO Licenses Libraries
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         findViewById<RecyclerView>(R.id.qrlist).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = lManager
             adapter = rAdapter
         }
 
@@ -43,9 +44,10 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Cannot Scan QR Code Without Camera Permission!", Toast.LENGTH_LONG).show()
         } else { //Have QR Code
             data?.getStringExtra("value")?.let {
-                itemList.add(it) //Used for display
-                db.itemDAO().insertItem(ItemModel(value = it)) //Used for persistence
-                rAdapter.notifyItemInserted(itemList.size - 1)
+                itemList.add(0,it) //Used for display, newest at top
+                db.itemDAO().insertItem(ItemModel(value = it)) //Used for persistence, append last and reverse on startup
+                rAdapter.notifyItemInserted(0) //Update View
+                lManager.scrollToPositionWithOffset(0,0) //Scroll up, because new item there (otherwise will stay at old first item
             } //Add String if present
         }
         //TODO Cut Long Text on View
