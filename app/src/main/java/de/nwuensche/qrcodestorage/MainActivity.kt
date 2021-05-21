@@ -16,7 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
     val db: ItemDB by lazy {  Room.databaseBuilder(this, ItemDB::class.java, "DB").allowMainThreadQueries().build() }
     val itemList: MutableList<String> by lazy { db.itemDAO().getAllItemValues().reversed().toMutableList() } // Used to query DB only once // Newest First
-    val rAdapter: RAdapter by lazy { RAdapter(itemList, getSystemService(CLIPBOARD_SERVICE) as ClipboardManager) }
+    val rAdapter: RAdapter by lazy { RAdapter(itemList, getSystemService(CLIPBOARD_SERVICE) as ClipboardManager) } //Can't init Clipboard in Adapter, so do it here
     val lManager = LinearLayoutManager(this)
     //TODO Licenses Libraries
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
                 lManager.scrollToPositionWithOffset(0,0) //Scroll up, because new item there (otherwise will stay at old first item
             } //Add String if present
         }
-        //TODO Cut Long Text on View
         super.onActivityResult(requestCode, resultCode, data)
     }
 }
