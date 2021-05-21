@@ -13,11 +13,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.BarcodeFormat
-import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 
 
-class RAdapter(private val itemNames: List<String>, private val clipboard: ClipboardManager) : RecyclerView.Adapter<RAdapter.ViewHolder>() {
+class RAdapter(private val itemNames: List<String>, private val clipboard: ClipboardManager) :
+    RecyclerView.Adapter<RAdapter.ViewHolder>() {
     val writer = QRCodeWriter()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,33 +33,32 @@ class RAdapter(private val itemNames: List<String>, private val clipboard: Clipb
         holder.copyView.setOnClickListener {
             val clip = ClipData.newPlainText("QR Value", itemNames[position])
             clipboard.setPrimaryClip(clip)
-            Toast.makeText(context, context.resources.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.copied_to_clipboard),
+                Toast.LENGTH_SHORT
+            ).show()
         }
         holder.showQRView.setOnClickListener {
             val SIZE = 512
-            try {
-                val bitMatrix = writer.encode(itemNames[position], BarcodeFormat.QR_CODE, SIZE, SIZE)
-                val width = bitMatrix.width
-                val height = bitMatrix.height
-                val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-                for (x in 0 until width) {
-                    for (y in 0 until height) {
-                        bmp.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
-                    }
-                }
+            val bitMatrix = writer.encode(itemNames[position], BarcodeFormat.QR_CODE, SIZE, SIZE)
+            val bmp = Bitmap.createBitmap(bitMatrix.width, bitMatrix.height, Bitmap.Config.RGB_565)
 
-                val dialog = AlertDialog.Builder(context)
-                val dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog, null)
-                dialog.setView(dialogLayout)
-                dialogLayout.findViewById<ImageView>(R.id.qrDialogView).apply {
-                    setImageBitmap(bmp)
+            for (x in 0 until bitMatrix.width) {
+                for (y in 0 until bitMatrix.height) {
+                    bmp.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
                 }
-                dialog.create().apply {
-                    show()
-                    window?.setLayout(SIZE,SIZE)//Adjust Width to match barcode
-                }
-            } catch (e: WriterException) {
-                e.printStackTrace()
+            }
+
+            val dialog = AlertDialog.Builder(context)
+            val dialogLayout = LayoutInflater.from(context).inflate(R.layout.dialog, null)
+            dialog.setView(dialogLayout)
+            dialogLayout.findViewById<ImageView>(R.id.qrDialogView).apply {
+                setImageBitmap(bmp)
+            }
+            dialog.create().apply {
+                show()
+                window?.setLayout(SIZE, SIZE)//Adjust Width to match barcode
             }
         }
     }
